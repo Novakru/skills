@@ -13,7 +13,7 @@ const usage = 'node record.mjs --before <OpenFilm path> --after <OpenFilm path> 
 const sha256 = async (path) => createHash('sha256').update(await readFile(path)).digest('hex');
 const fromBuild = (pkg, path) => import(pathToFileURL(join(pkg, path)).href);
 
-async function openFilmPackage(path) {
+export async function openFilmPackage(path) {
   for (const pkg of [resolve(path, 'packages', 'openfilm'), resolve(path)]) {
     let manifest;
     try {
@@ -66,7 +66,7 @@ async function capture({ build, out, media, role, scenario, label }) {
   const { filmHtml } = await fromBuild(build.pkg, 'src/film-doc.mjs');
   const { openProject } = await fromBuild(build.pkg, 'studio/server/projects.mjs');
   const { startStudio } = await fromBuild(build.pkg, 'studio/server/server.mjs');
-  const { default: scene } = await import(`./scenarios/${scenario}.mjs`);
+  const { default: scene } = await import(`./${scenario}/scenario.mjs`);
   const folder = join(process.env.OPENFILM_LIBRARY, 'GIF demo');
   const errors = [];
   const startedAt = new Date().toISOString();
@@ -126,7 +126,8 @@ async function compare(args) {
   if (values.help) { console.log(usage); return; }
   if (!values.before || !values.after || !values.media || !values.out) throw new Error(usage);
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(values.scenario)) throw new Error('Invalid scenario name.');
-  await access(fileURLToPath(new URL(`./scenarios/${values.scenario}.mjs`, import.meta.url)));
+  try { await access(fileURLToPath(new URL(`./${values.scenario}/scenario.mjs`, import.meta.url))); }
+  catch { throw new Error(`No comparison scenario named ${values.scenario}. See README.md for feature commands.`); }
   const media = resolve(values.media), out = resolve(values.out);
   if (!(await stat(media)).isFile()) throw new Error('Media must be a file.');
   const builds = {};
@@ -179,7 +180,7 @@ async function compare(args) {
   }
 }
 
-try {
+if (process.argv[1] && import.meta.url === pathToFileURL(await realpath(resolve(process.argv[1]))).href) try {
   if (process.argv[2] === '--capture-one') await capture(JSON.parse(process.argv[3]));
   else await compare(process.argv.slice(2));
 } catch (error) {

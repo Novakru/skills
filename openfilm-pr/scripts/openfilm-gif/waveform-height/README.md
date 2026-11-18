@@ -1,0 +1,38 @@
+# 复现 PR #471
+
+准备 Node.js 22.18 或以上、项目指定的 pnpm、FFmpeg，以及两个版本各自使用的 Playwright Chromium。从 skills 仓库的 openfilm-pr 目录运行下面的命令。命令中的目录可替换。
+
+安装官方稳定版和对应的 Chromium。
+
+```sh
+npm install --prefix ../../waveform-before --no-save openfilm@0.3.2
+node ../../waveform-before/node_modules/playwright-core/cli.js install chromium-headless-shell
+```
+
+从 OpenFilm checkout 取 #471 的最终审阅提交，建立一个独立 worktree，安装依赖并构建 Studio。[#471 修订提交](https://github.com/openfilm/openfilm/pull/471/commits/926b26549ec0a54d7be4503d7a7a6ede9b3b1cfc) · [OpenFilm 环境配置](https://github.com/openfilm/openfilm/blob/main/CONTRIBUTING.md#quick-start)
+
+```sh
+git -C ../../openfilm fetch https://github.com/openfilm/openfilm.git refs/pull/471/head
+git -C ../../openfilm worktree add --detach ../waveform-after 926b26549ec0a54d7be4503d7a7a6ede9b3b1cfc
+pnpm --dir ../../waveform-after install --frozen-lockfile
+pnpm --dir ../../waveform-after --filter openfilm build:ui
+pnpm --dir ../../waveform-after --filter openfilm exec playwright-core install chromium-headless-shell
+```
+
+使用一份至少 8 秒、有可辨识原声且可公开分享的 MP4。复用原演示素材时，从来源页下载视频，截取第 10–18 秒并保留原音量。它是演示素材，独立于 issue 报告里的素材。[Alex Meets the President，Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Alex_Meets_the_President.webm)
+
+```sh
+ffmpeg -ss 10 -i ../../Alex-Meets-the-President.webm -t 8 -vf scale=640:360 -c:v libx264 -pix_fmt yuv420p -c:a aac ../../waveform-example.mp4
+```
+
+将两个目录和同一个 MP4 传给录制入口。输出目录使用新建或空目录。`--before` 和 `--after` 都可以指向已构建的 OpenFilm checkout 或已安装的 OpenFilm npm 包目录。
+
+```sh
+node scripts/openfilm-gif/record.mjs --before ../../waveform-before/node_modules/openfilm --after ../../waveform-after --media ../../waveform-example.mp4 --out ../../waveform-gifs --scenario waveform-height --before-label "OpenFilm 0.3.2" --after-label "PR #471"
+```
+
+输出 `before.gif`、`after.gif`、原始 WebM 和 `measurements.json`。预期视频轨道从 36px 拉到 156px 时，稳定版的波形画布保持 13px，修订版从 13px 增至 40px。两版纯音频的画布均从 27px 增至 107px。场景同时核对实际波形像素、控件对齐、同高波形和音量。字幕、鼠标和描边均是录制标注。
+
+场景断言和操作见 [scenario.mjs](scenario.mjs)。录制语言、视口、裁切和开头裁切时间由 [example.json](example.json) 提供。转码见 [共用入口](../README.md)。
+
+2026-11-18 在 Windows 用 npm 的 0.3.2 和上述 #471 提交重录，两段 GIF 与测量文件均生成。波形尺寸与前述预期一致，两版同高波形的逐列最大差均为 0px。修订版使用 Node.js 26 在较短路径下构建。若 Windows 上 Vite 报模块解析错误，可把 checkout 换到较短路径，再用较新的 Node.js 构建。

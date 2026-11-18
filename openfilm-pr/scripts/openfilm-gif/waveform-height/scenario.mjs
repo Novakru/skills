@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { extname, join } from 'node:path';
+import recording from './example.json' with { type: 'json' };
 
 const asset = 'assets/source.mp4';
 const infoHeight = 15;
@@ -182,12 +183,4 @@ async function run({ page, caption, role, folder }) {
   return { measurements, sameCanvas: { heightPx: tall.canvasPx, maxColumnErrorPx }, filmUnchanged: true };
 }
 
-export default {
-  locale: 'zh-CN',
-  viewport: { width: 1280, height: 900 },
-  storage: { 'openfilm.project.timelineH': '500' },
-  crop: '1280:500:0:400',
-  trim: 2,
-  prepare,
-  run,
-};
+export default { ...recording, prepare, run };

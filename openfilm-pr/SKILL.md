@@ -31,7 +31,7 @@ description: 为 openfilm/openfilm 准备和提交聚焦的 PR，覆盖 issue �
 - **验证结果**。记录命令、环境、通过数、失败、跳过和未运行项。区分预期的上游复现失败与真正的回归。本地按改动运行相关测试和检查，例如 `pnpm typecheck`、`pnpm build`、`pnpm audit:public` 与 `pnpm check:pack`。将本地结果与合并前要求通过的 macOS、Windows、Linux CI 分开记录。合成素材只支持其复现条件下的结论。
 - **审核材料**。用「要求｜代码位置｜验证证据｜结果」逐项核对。另列「文件｜改了什么｜为什么必要」，交代测试的价值和已有行为是否保留。涉及 UI 时附上两段 GIF。列出尚待验证的事项。
 
-录制 OpenFilm Studio 的 UI 对照时，使用 `scripts/openfilm-gif/record.mjs` 传入前后版本、同一素材和操作场景，生成两段 GIF 与测量结果。已有录屏时可用同目录的 `encode-gif.mjs` 转码。[脚本目录与复现命令](scripts/openfilm-gif/README.md)
+生成 GIF 前先查 [功能索引](scripts/openfilm-gif/README.md)，按当前 PR 要验证的操作和效果选择已有功能。没有合适的功能时，复用顶层录制与转码工具，在 `scripts/openfilm-gif/` 下新建功能子目录，将场景脚本、示例配置和复现说明放在一起。核对输出和实际运行结果后，将脚本、复现说明和更新后的索引一起提交到 skills 仓库。
 
 ## 4. 撰写精简、可视化的 PR
 
@@ -54,4 +54,4 @@ description: 为 openfilm/openfilm 准备和提交聚焦的 PR，覆盖 issue �
 
 两段真实素材 GIF 使用同样的缩放操作。视频轨道从 36px 拉到 156px，稳定版的画布保持 13px，修订版从 13px 增至 40px。纯音频在两版均从 27px 增至 107px。完整正文和对照演示见已合并的 PR。[PR #471](https://github.com/openfilm/openfilm/pull/471)
 
-这两段 GIF 可用目录 `scripts/openfilm-gif/` 中的录制器重录。选择 `waveform-height` 场景，对比官方 0.3.2 与 #471 的修订版。[场景脚本](scripts/openfilm-gif/scenarios/waveform-height.mjs) · [复现步骤](scripts/openfilm-gif/README.md#复现-pr-471)
+这两段 GIF 可用目录 `scripts/openfilm-gif/` 中的录制器重录。选择 `waveform-height` 场景，对比官方 0.3.2 与 #471 的修订版。[场景脚本](scripts/openfilm-gif/waveform-height/scenario.mjs) · [复现步骤](scripts/openfilm-gif/waveform-height/README.md)

@@ -1,0 +1,22 @@
+{
+  "model": "black-forest-labs/flux-3-image",
+  "prompt": "Create a clean studio tabletop photograph containing the three main objects shown in the reference images. Keep their shapes and characteristic colors, arrange them together on a pale neutral surface with soft natural lighting. No text, no people.",
+  "ratio": "16:9",
+  "references": [
+    {
+      "file": "fixtures/ref1.jpg",
+      "title": "小黄鸭",
+      "sha256": "8b25ee0be091b732a40e66c0d268f9790089929eaaae09bdd109f4963728d96d"
+    },
+    {
+      "file": "fixtures/ref2.jpg",
+      "title": "红色咖啡杯",
+      "sha256": "2869bc06e707ae759520781e908769bb58559ed08d38cb5076a45d047439b8e2"
+    },
+    {
+      "file": "fixtures/ref3.jpg",
+      "title": "向日葵",
+      "sha256": "0e27d04d82da77876f419836574793966e6b3298ca78e72701addce1d593664e"
+    }
+  ]
+}

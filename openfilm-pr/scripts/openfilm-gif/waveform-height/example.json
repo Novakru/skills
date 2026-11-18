@@ -1,0 +1,7 @@
+{
+  "locale": "zh-CN",
+  "viewport": { "width": 1280, "height": 900 },
+  "storage": { "openfilm.project.timelineH": "500" },
+  "crop": "1280:500:0:400",
+  "trim": 2
+}
