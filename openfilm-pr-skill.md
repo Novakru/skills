@@ -31,6 +31,8 @@ description: 为 openfilm/openfilm 准备和提交聚焦的 PR，覆盖 issue �
 - **验证结果**。记录命令、环境、通过数、失败、跳过和未运行项。区分预期的上游复现失败与真正的回归。本地按改动运行相关测试和检查，例如 `pnpm typecheck`、`pnpm build`、`pnpm audit:public` 与 `pnpm check:pack`。将本地结果与合并前要求通过的 macOS、Windows、Linux CI 分开记录。合成素材只支持其复现条件下的结论。
 - **审核材料**。用「要求｜代码位置｜验证证据｜结果」逐项核对。另列「文件｜改了什么｜为什么必要」，交代测试的价值和已有行为是否保留。涉及 UI 时附上两段 GIF。列出尚待验证的事项。
 
+录制 OpenFilm Studio 的 UI 对照时，使用 `scripts/openfilm-gif/record.mjs` 传入前后版本、同一素材和操作场景，生成两段 GIF 与测量结果。已有录屏时可用同目录的 `encode-gif.mjs` 转码。[脚本目录与复现命令](scripts/openfilm-gif/README.md)
+
 ## 4. 撰写精简、可视化的 PR
 
 - 按项目模板组织正文。标题沿用 `Studio: …`、`CLI: …` 等前缀并说明结果。项目采用 squash merge，PR 标题会成为合并提交标题。正文和回复默认用简洁英文，遵照用户和项目的语言要求。
@@ -43,3 +45,13 @@ description: 为 openfilm/openfilm 准备和提交聚焦的 PR，覆盖 issue �
 - 提交前向用户提供最终差异、逐项核对、测试结果、适用的 GIF 和拟发布正文。收到对当前版本的发布授权后，按项目约定提交。已有授权继续执行。
 - 只暂存审核范围内的文件。检查暂存差异，按项目风格写提交标题，推送到已核对的 fork 分支。已有 PR 时更新原 PR，尚无 PR 时，向已核对的上游目标分支新建 PR。
 - 打开发布后的 PR 核对标题、正文、提交、Files changed 和 GIF 的实际显示。查看对应提交的 CI 状态。工作流等待维护者批准时，记录为待批准。按用户要求跟进审阅和检查结果。
+
+## 第 471 号 PR 的波形修复
+
+报告提到波形太小，分离音频后也看不清。复现确认纯音频已有缩放，带原声视频的波形画布仍固定为 13px。构造的低振幅样例中，画布变高后波峰仍为 1px。原始素材未验证，因此将低振幅记为可能原因。[Issue #446](https://github.com/openfilm/openfilm/issues/446)
+
+维护者要求移除占比菜单和 `trackWaveforms`，改用固定占比并保留 15px 音频区域下限。本次沿用旧方案的默认值 30%，以及原有波形绘制与控件交互。最终差异仅涉及 `Timeline.tsx`、一个浏览器回归和一个 `patch` changeset。[维护者回复](https://github.com/openfilm/openfilm/pull/471#issuecomment-6915468855)
+
+两段真实素材 GIF 使用同样的缩放操作。视频轨道从 36px 拉到 156px，稳定版的画布保持 13px，修订版从 13px 增至 40px。纯音频在两版均从 27px 增至 107px。完整正文和对照演示见已合并的 PR。[PR #471](https://github.com/openfilm/openfilm/pull/471)
+
+这两段 GIF 可用目录 `scripts/openfilm-gif/` 中的录制器重录。选择 `waveform-height` 场景，对比官方 0.3.2 与 #471 的修订版。[场景脚本](scripts/openfilm-gif/scenarios/waveform-height.mjs) · [复现步骤](scripts/openfilm-gif/README.md#复现-pr-471)
