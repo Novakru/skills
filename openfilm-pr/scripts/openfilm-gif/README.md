@@ -23,7 +23,7 @@ node ../../waveform-before/node_modules/playwright-core/cli.js install chromium-
 
 ```sh
 git -C ../../openfilm fetch https://github.com/openfilm/openfilm.git refs/pull/471/head
-git -C ../../openfilm worktree add --detach ../../waveform-after 926b26549ec0a54d7be4503d7a7a6ede9b3b1cfc
+git -C ../../openfilm worktree add --detach ../waveform-after 926b26549ec0a54d7be4503d7a7a6ede9b3b1cfc
 pnpm --dir ../../waveform-after install --frozen-lockfile
 pnpm --dir ../../waveform-after --filter openfilm build:ui
 pnpm --dir ../../waveform-after --filter openfilm exec playwright-core install chromium-headless-shell
